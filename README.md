@@ -258,8 +258,8 @@ Revenue Streams:
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/streaky_app.git
-cd streaky_app
+git clone https://github.com/gokulkumarv24/strakyhabi.git
+cd strakyhabi
 
 # Install Flutter dependencies
 flutter pub get
@@ -367,10 +367,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👨‍💻 AUTHOR
 
-**Gokul Kumar**
+**Gokul Kumar V**
 
-- GitHub: [@gokul](https://github.com/gokul)
-- Email: gokul@example.com
+- GitHub: [@gokulkumarv24](https://github.com/gokulkumarv24)
+- Email: gokulkumar.machers@sifycorp.com
 
 ---
 
@@ -398,4 +398,4 @@ For support and questions:
 
 - 📧 Email: support@streakyapp.com
 - 💬 Discord: [Join our community](https://discord.gg/streakyapp)
-- 🐛 Issues: [GitHub Issues](https://github.com/yourusername/streaky_app/issues)
+- 🐛 Issues: [GitHub Issues](https://github.com/gokulkumarv24/strakyhabi/issues)
