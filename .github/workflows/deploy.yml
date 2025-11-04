@@ -1,0 +1,279 @@
+name: Deploy Streaky App
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+      - develop
+  pull_request:
+    branches:
+      - main
+      - staging
+
+env:
+  FLUTTER_VERSION: "3.19.0"
+  NODE_VERSION: "20"
+
+jobs:
+  # Test Flutter app
+  test-flutter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: "stable"
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: Run code generation
+        run: flutter packages pub run build_runner build --delete-conflicting-outputs
+
+      - name: Analyze Flutter code
+        run: flutter analyze
+
+      - name: Run Flutter tests
+        run: flutter test
+
+      - name: Check Flutter formatting
+        run: dart format --set-exit-if-changed .
+
+  # Build Flutter APK
+  build-flutter:
+    runs-on: ubuntu-latest
+    needs: test-flutter
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: "stable"
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: Run code generation
+        run: flutter packages pub run build_runner build --delete-conflicting-outputs
+
+      - name: Build APK (Debug)
+        if: github.ref == 'refs/heads/staging'
+        run: flutter build apk --debug
+
+      - name: Build APK (Release)
+        if: github.ref == 'refs/heads/main'
+        run: flutter build apk --release
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk-${{ github.ref_name }}
+          path: build/app/outputs/flutter-apk/*.apk
+
+  # Test Worker
+  test-worker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: worker/package-lock.json
+
+      - name: Install Worker dependencies
+        working-directory: worker
+        run: npm ci
+
+      - name: Lint Worker code
+        working-directory: worker
+        run: npm run lint
+
+      - name: Run Worker tests
+        working-directory: worker
+        run: npm test
+
+  # Deploy to Cloudflare Workers
+  deploy-worker:
+    runs-on: ubuntu-latest
+    needs: [test-worker, test-flutter]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/develop'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: worker/package-lock.json
+
+      - name: Install Worker dependencies
+        working-directory: worker
+        run: npm ci
+
+      - name: Deploy to Development
+        if: github.ref == 'refs/heads/develop'
+        working-directory: worker
+        run: npx wrangler deploy --env development
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+      - name: Deploy to Staging
+        if: github.ref == 'refs/heads/staging'
+        working-directory: worker
+        run: npx wrangler deploy --env staging
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+      - name: Deploy to Production
+        if: github.ref == 'refs/heads/main'
+        working-directory: worker
+        run: npx wrangler deploy --env production
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+  # Create GitHub Release
+  create-release:
+    runs-on: ubuntu-latest
+    needs: [build-flutter, deploy-worker]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download APK artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: apk-main
+          path: ./artifacts
+
+      - name: Get version from pubspec.yaml
+        id: version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | cut -d ' ' -f 2 | tr -d '\r')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          release_name: Streaky App ${{ steps.version.outputs.tag }}
+          body: |
+            ## What's New in ${{ steps.version.outputs.tag }}
+
+            ### Features
+            - 🎯 Task management with streak tracking
+            - 📊 Analytics and productivity insights
+            - 🔔 Smart notifications and reminders
+            - 📱 Offline-first architecture
+            - ☁️ Zero-cost cloud sync with Cloudflare
+
+            ### Technical Updates
+            - Flutter ${{ env.FLUTTER_VERSION }}
+            - Cloudflare Workers backend
+            - JWT authentication
+            - Hive local storage
+
+            ### Download
+            - [Android APK](./app-release.apk)
+
+            ### API Endpoints
+            - Production: `https://api.yourdomain.com`
+            - Documentation: Coming soon
+
+            ---
+
+            **Full Changelog**: https://github.com/${{ github.repository }}/compare/v1.0.0...${{ steps.version.outputs.tag }}
+          draft: false
+          prerelease: false
+
+      - name: Upload APK to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./artifacts/app-release.apk
+          asset_name: streaky-app-${{ steps.version.outputs.version }}.apk
+          asset_content_type: application/vnd.android.package-archive
+
+  # Security scanning
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: "fs"
+          scan-ref: "."
+          format: "sarif"
+          output: "trivy-results.sarif"
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: "trivy-results.sarif"
+
+  # Lighthouse performance testing
+  lighthouse:
+    runs-on: ubuntu-latest
+    needs: deploy-worker
+    if: github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Wait for deployment
+        run: sleep 30
+
+      - name: Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v10
+        with:
+          urls: |
+            https://api.staging.yourdomain.com/health
+          configPath: "./lighthouse.json"
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+  # Notification on deployment success
+  notify-success:
+    runs-on: ubuntu-latest
+    needs: [deploy-worker, build-flutter]
+    if: success() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging')
+    steps:
+      - name: Notify deployment success
+        run: |
+          echo "✅ Streaky App deployed successfully!"
+          echo "Environment: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Actor: ${{ github.actor }}"
+
+          # Here you could add Slack, Discord, or email notifications
+          # Example with curl to a webhook:
+          # curl -X POST -H 'Content-type: application/json' \
+          #   --data '{"text":"✅ Streaky App deployed to ${{ github.ref_name }}"}' \
+          #   ${{ secrets.SLACK_WEBHOOK_URL }}

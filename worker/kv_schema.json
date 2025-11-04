@@ -1,0 +1,268 @@
+{
+  "kv_namespaces": {
+    "USER_KV": {
+      "description": "Main KV store for user data, tasks, and streaks",
+      "schema": {
+        "user:{userId}": {
+          "type": "object",
+          "description": "User profile data",
+          "properties": {
+            "id": "string",
+            "name": "string", 
+            "email": "string",
+            "createdAt": "ISO string",
+            "subscriptionTier": "free|premium|team",
+            "subscriptionExpiry": "ISO string"
+          }
+        },
+        "tasks:{userId}": {
+          "type": "array",
+          "description": "User's tasks",
+          "items": {
+            "id": "string",
+            "title": "string",
+            "description": "string",
+            "isCompleted": "boolean",
+            "dueDate": "ISO string",
+            "category": "string",
+            "priority": "low|medium|high|urgent",
+            "createdAt": "ISO string",
+            "lastModified": "ISO string"
+          }
+        },
+        "streaks:{userId}": {
+          "type": "array", 
+          "description": "User's streaks",
+          "items": {
+            "id": "string",
+            "taskId": "string",
+            "category": "string",
+            "currentStreak": "number",
+            "longestStreak": "number",
+            "lastCompletedDate": "ISO string",
+            "isActive": "boolean"
+          }
+        },
+        "analytics:event:{eventId}": {
+          "type": "object",
+          "description": "Individual analytics event",
+          "ttl": "30 days",
+          "properties": {
+            "eventName": "string",
+            "properties": "object",
+            "timestamp": "ISO string",
+            "userId": "string"
+          }
+        },
+        "analytics:daily:{date}": {
+          "type": "object",
+          "description": "Daily analytics aggregates",
+          "properties": {
+            "date": "YYYY-MM-DD",
+            "events": "object",
+            "totalEvents": "number",
+            "lastUpdated": "ISO string"
+          }
+        },
+        "session:{sessionId}": {
+          "type": "object",
+          "description": "User session data",
+          "ttl": "24 hours",
+          "properties": {
+            "sessionId": "string",
+            "userId": "string", 
+            "startTime": "ISO string",
+            "endTime": "ISO string",
+            "deviceInfo": "object"
+          }
+        },
+        "user:{userId}:last_session": {
+          "type": "string",
+          "description": "Last session ID for user",
+          "ttl": "7 days"
+        },
+        "leaderboard:global": {
+          "type": "array",
+          "description": "Global streak leaderboard",
+          "ttl": "1 hour",
+          "items": {
+            "userId": "string",
+            "name": "string",
+            "longestStreak": "number",
+            "category": "string"
+          }
+        },
+        "config:app": {
+          "type": "object",
+          "description": "Application configuration",
+          "properties": {
+            "maintenance": "boolean",
+            "version": "string",
+            "features": "object"
+          }
+        }
+      }
+    }
+  },
+  "api_endpoints": {
+    "/health": {
+      "method": "GET",
+      "description": "Health check endpoint",
+      "auth_required": false,
+      "response": {
+        "status": "healthy|unhealthy",
+        "timestamp": "ISO string",
+        "version": "string"
+      }
+    },
+    "/auth/register": {
+      "method": "POST", 
+      "description": "User registration",
+      "auth_required": false,
+      "body": {
+        "name": "string",
+        "email": "string",
+        "password": "string (optional)"
+      },
+      "response": {
+        "user": "User object",
+        "token": "JWT string"
+      }
+    },
+    "/auth/login": {
+      "method": "POST",
+      "description": "User login",
+      "auth_required": false,
+      "body": {
+        "email": "string",
+        "password": "string (optional)"
+      },
+      "response": {
+        "user": "User object", 
+        "token": "JWT string"
+      }
+    },
+    "/auth/verify": {
+      "method": "POST",
+      "description": "Verify JWT token",
+      "auth_required": false,
+      "body": {
+        "token": "JWT string"
+      },
+      "response": {
+        "valid": "boolean",
+        "payload": "JWT payload object"
+      }
+    },
+    "/tasks [GET]": {
+      "method": "GET",
+      "description": "Get user tasks",
+      "auth_required": true,
+      "query_params": {
+        "since": "ISO string (optional)"
+      },
+      "response": {
+        "tasks": "Array of task objects"
+      }
+    },
+    "/tasks [POST]": {
+      "method": "POST",
+      "description": "Create new task",
+      "auth_required": true,
+      "body": "Task object",
+      "response": {
+        "task": "Created task object"
+      }
+    },
+    "/tasks/sync": {
+      "method": "POST",
+      "description": "Sync tasks with conflict resolution",
+      "auth_required": true,
+      "body": {
+        "tasks": "Array of task objects",
+        "lastSyncTime": "ISO string (optional)"
+      },
+      "response": {
+        "tasks": "Merged task array",
+        "syncTime": "ISO string"
+      }
+    },
+    "/streaks/sync": {
+      "method": "POST",
+      "description": "Sync streaks with conflict resolution",
+      "auth_required": true,
+      "body": {
+        "streaks": "Array of streak objects",
+        "lastSyncTime": "ISO string (optional)"
+      },
+      "response": {
+        "streaks": "Merged streak array",
+        "syncTime": "ISO string"
+      }
+    },
+    "/streaks/leaderboard": {
+      "method": "GET",
+      "description": "Get streak leaderboard",
+      "auth_required": true,
+      "query_params": {
+        "category": "string (optional)",
+        "limit": "number (optional, default 10)"
+      },
+      "response": {
+        "leaderboard": "Array of leaderboard entries"
+      }
+    },
+    "/user/profile": {
+      "method": "PUT",
+      "description": "Update user profile",
+      "auth_required": true,
+      "body": "User object",
+      "response": {
+        "user": "Updated user object"
+      }
+    },
+    "/user/analytics": {
+      "method": "GET",
+      "description": "Get user analytics",
+      "auth_required": true,
+      "response": {
+        "analytics": "Analytics object"
+      }
+    },
+    "/premium/verify": {
+      "method": "POST",
+      "description": "Verify premium subscription",
+      "auth_required": true,
+      "body": {
+        "purchaseToken": "string",
+        "productId": "string"
+      },
+      "response": {
+        "valid": "boolean",
+        "expiryDate": "ISO string"
+      }
+    },
+    "/analytics/event": {
+      "method": "POST",
+      "description": "Log analytics event",
+      "auth_required": true,
+      "body": {
+        "eventName": "string",
+        "properties": "object (optional)"
+      },
+      "response": {
+        "success": "boolean"
+      }
+    }
+  },
+  "rate_limits": {
+    "default": "100 requests per minute per IP",
+    "auth": "10 requests per minute per IP",
+    "sync": "20 requests per minute per user"
+  },
+  "cors": {
+    "origins": ["*"],
+    "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    "headers": ["Content-Type", "Authorization"]
+  }
+}
