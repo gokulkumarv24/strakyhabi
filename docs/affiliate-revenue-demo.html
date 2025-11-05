@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎁 Streaky Affiliate Revenue System Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .earnings-dashboard {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 25px;
+            margin: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .earnings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .earning-item {
+            text-align: center;
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .earning-item h3 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+
+        .earning-item p {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+
+        .controls {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .offers-container {
+            padding: 20px;
+        }
+
+        .offer-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            margin: 15px 0;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .offer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .offer-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .offer-header h3 {
+            font-size: 1.4em;
+            margin-bottom: 8px;
+        }
+
+        .offer-header p {
+            opacity: 0.9;
+        }
+
+        .offer-rewards {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .reward-chip {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .scratch-card {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scratch-card:hover {
+            background: linear-gradient(45deg, #ff5252, #26d0ce);
+        }
+
+        .scratch-card.scratched {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            animation: celebration 0.6s ease-out;
+        }
+
+        @keyframes celebration {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .scratch-card h3 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .scratch-card p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .status {
+            padding: 20px;
+            margin: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .status.online {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.offline {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .mobile-preview {
+            margin: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .earnings-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎁 Streaky Rewards</h1>
+            <p>Complete CPS/CPC Affiliate Revenue System Demo</p>
+        </div>
+
+        <div class="earnings-dashboard">
+            <h2>💰 Your Earnings Dashboard</h2>
+            <div class="earnings-grid">
+                <div class="earning-item">
+                    <h3 id="cpc-earnings">₹0.00</h3>
+                    <p>CPC Earnings</p>
+                </div>
+                <div class="earning-item">
+                    <h3 id="cps-earnings">₹0.00</h3>
+                    <p>CPS Earnings</p>
+                </div>
+                <div class="earning-item">
+                    <h3 id="total-clicks">0</h3>
+                    <p>Total Clicks</p>
+                </div>
+                <div class="earning-item">
+                    <h3 id="total-sales">0</h3>
+                    <p>Total Sales</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="loadOffers()">🔄 Refresh Offers</button>
+            <button class="btn" onclick="simulateSale()">🛒 Simulate Sale</button>
+            <button class="btn" onclick="resetEarnings()">🔄 Reset Demo</button>
+        </div>
+
+        <div id="connection-status" class="status offline">
+            🔴 Backend: Testing with Demo Data (Cloudflare Worker not connected)
+        </div>
+
+        <div class="offers-container">
+            <h2 style="text-align: center; margin-bottom: 20px;">🎯 Available Offers</h2>
+            <div id="offers-list"></div>
+        </div>
+
+        <div class="mobile-preview">
+            <h3>📱 Mobile Experience Preview</h3>
+            <p>This demo shows how the affiliate revenue system works. In the real Flutter app, users will see beautiful animations, real-time updates, and seamless mobile interactions.</p>
+            <p><strong>Revenue Model:</strong> CPC (₹0.50-₹2 per click) + CPS (5-15% commission on sales)</p>
+        </div>
+    </div>
+
+    <script>
+        // Demo configuration
+        const API_BASE = 'https://affiliate-revenue-engine.your-subdomain.workers.dev';
+        let userEarnings = {
+            cpc: 0,
+            cps: 0,
+            clicks: 0,
+            sales: 0
+        };
+
+        // Sample offers data
+        const sampleOffers = [
+            {
+                offerId: 'amazon_electronics',
+                title: 'Amazon Electronics Sale',
+                description: 'Get cashback on smartphones, laptops, and gadgets. Limited time offer!',
+                brand: 'Amazon',
+                category: 'Electronics',
+                cpcRate: 5.0,
+                cpsRate: 8.0,
+                source: 'vCommission'
+            },
+            {
+                offerId: 'flipkart_fashion',
+                title: 'Flipkart Fashion Fiesta',
+                description: 'Trendy clothes and accessories with instant cashback rewards',
+                brand: 'Flipkart',
+                category: 'Fashion',
+                cpcRate: 3.0,
+                cpsRate: 12.0,
+                source: 'Admitad'
+            },
+            {
+                offerId: 'udemy_courses',
+                title: 'Udemy Learning Festival',
+                description: 'Master new skills with courses starting at ₹499. Earn while you learn!',
+                brand: 'Udemy',
+                category: 'Education',
+                cpcRate: 10.0,
+                cpsRate: 15.0,
+                source: 'Cuelinks'
+            },
+            {
+                offerId: 'zomato_food',
+                title: 'Zomato Food Delivery',
+                description: 'Order your favorite meals and get cashback on every order',
+                brand: 'Zomato',
+                category: 'Food',
+                cpcRate: 2.0,
+                cpsRate: 5.0,
+                source: 'Impact'
+            },
+            {
+                offerId: 'booking_travel',
+                title: 'Booking.com Travel Deals',
+                description: 'Book hotels worldwide and earn travel cashback rewards',
+                brand: 'Booking.com',
+                category: 'Travel',
+                cpcRate: 8.0,
+                cpsRate: 6.0,
+                source: 'Awin'
+            }
+        ];
+
+        // Initialize demo
+        function init() {
+            loadOffers();
+            updateEarningsDisplay();
+            // Try to connect to real backend
+            testBackendConnection();
+        }
+
+        // Test backend connection
+        async function testBackendConnection() {
+            try {
+                const response = await fetch(`${API_BASE}/api/offers?category=shopping`, {
+                    method: 'GET',
+                    timeout: 5000
+                });
+                
+                if (response.ok) {
+                    document.getElementById('connection-status').className = 'status online';
+                    document.getElementById('connection-status').innerHTML = '🟢 Backend: Connected to Cloudflare Worker';
+                    
+                    const realOffers = await response.json();
+                    if (realOffers.length > 0) {
+                        displayOffers(realOffers);
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.log('Backend not available, using demo data');
+            }
+            
+            // Fallback to demo data
+            displayOffers(sampleOffers);
+        }
+
+        // Load and display offers
+        function loadOffers() {
+            displayOffers(sampleOffers);
+        }
+
+        // Display offers in UI
+        function displayOffers(offers) {
+            const container = document.getElementById('offers-list');
+            container.innerHTML = offers.map(offer => `
+                <div class="offer-card">
+                    <div class="offer-header">
+                        <h3>${offer.title}</h3>
+                        <p>${offer.description}</p>
+                        <div class="offer-rewards">
+                            <span class="reward-chip">CPC: ₹${offer.cpcRate}</span>
+                            <span class="reward-chip">CPS: ${offer.cpsRate}%</span>
+                            <span class="reward-chip">${offer.source}</span>
+                        </div>
+                    </div>
+                    <div class="scratch-card shimmer" onclick="scratchOffer('${offer.offerId}', ${offer.cpcRate}, '${offer.title}')">
+                        <h3>💰 Tap to Earn ₹${offer.cpcRate}</h3>
+                        <p>👆 Click to reveal instant reward!</p>
+                        <p style="font-size: 0.9em; margin-top: 10px;">🎁 Plus ${offer.cpsRate}% cashback on purchases</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Handle offer scratch/click
+        async function scratchOffer(offerId, amount, title) {
+            const scratchCard = event.target;
+            
+            // Visual feedback
+            scratchCard.classList.add('scratched');
+            scratchCard.innerHTML = `
+                <h3>✅ Reward Earned!</h3>
+                <p>You got ₹${amount}!</p>
+                <p>🔗 Opening ${title}...</p>
+            `;
+
+            // Track click (try real backend first, then fallback to demo)
+            try {
+                await fetch(`${API_BASE}/api/click/${offerId}/demo_user_123`, { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount, timestamp: new Date().toISOString() })
+                });
+                console.log('✅ Click tracked in backend');
+            } catch (error) {
+                console.log('📱 Demo mode: Click tracked locally');
+            }
+
+            // Update local earnings
+            userEarnings.cpc += amount;
+            userEarnings.clicks += 1;
+            updateEarningsDisplay();
+
+            // Simulate opening affiliate link
+            setTimeout(() => {
+                alert(`🔗 In the real app, this would open the affiliate link for ${title} and you'd earn ₹${amount} instantly!`);
+                
+                // Reset card after demo
+                setTimeout(() => {
+                    scratchCard.classList.remove('scratched');
+                    scratchCard.innerHTML = `
+                        <h3>💰 Tap to Earn ₹${amount}</h3>
+                        <p>👆 Click to reveal instant reward!</p>
+                        <p style="font-size: 0.9em; margin-top: 10px;">🎁 Bonus CPS on purchases</p>
+                    `;
+                }, 3000);
+            }, 1500);
+        }
+
+        // Simulate a sale conversion
+        function simulateSale() {
+            const saleAmount = Math.floor(Math.random() * 500) + 100; // Random sale ₹100-₹600
+            const commission = saleAmount * 0.08; // 8% commission
+            
+            userEarnings.cps += commission;
+            userEarnings.sales += 1;
+            updateEarningsDisplay();
+            
+            // Show success message
+            const message = `🎉 Sale Conversion!\n💰 Order Value: ₹${saleAmount}\n🎁 Your Commission: ₹${commission.toFixed(2)}\n\nThis demonstrates CPS (Cost Per Sale) revenue!`;
+            alert(message);
+        }
+
+        // Reset demo
+        function resetEarnings() {
+            userEarnings = { cpc: 0, cps: 0, clicks: 0, sales: 0 };
+            updateEarningsDisplay();
+            loadOffers();
+            alert('🔄 Demo reset! Start earning again by clicking offers.');
+        }
+
+        // Update earnings display
+        function updateEarningsDisplay() {
+            document.getElementById('cpc-earnings').textContent = `₹${userEarnings.cpc.toFixed(2)}`;
+            document.getElementById('cps-earnings').textContent = `₹${userEarnings.cps.toFixed(2)}`;
+            document.getElementById('total-clicks').textContent = userEarnings.clicks;
+            document.getElementById('total-sales').textContent = userEarnings.sales;
+        }
+
+        // Start demo when page loads
+        window.addEventListener('load', init);
+
+        // Add some demo automation
+        setInterval(() => {
+            // Randomly simulate background activity for demo effect
+            if (Math.random() < 0.1) { // 10% chance every 5 seconds
+                const backgroundEarning = Math.floor(Math.random() * 5) + 1;
+                userEarnings.cpc += backgroundEarning;
+                updateEarningsDisplay();
+            }
+        }, 5000);
+    </script>
+</body>
+</html>

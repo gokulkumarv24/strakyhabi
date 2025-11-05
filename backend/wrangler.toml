@@ -1,0 +1,30 @@
+name = "streaky-affiliate-engine"
+main = "src/index.js"
+compatibility_date = "2025-11-05"
+
+[vars]
+CUELINKS_API_KEY = "your_cuelinks_key_here"
+ADMITAD_CLIENT_ID = "your_admitad_client_id_here"
+ADMITAD_SECRET = "your_admitad_secret_here"
+VCOMMISSION_API_KEY = "your_vcommission_key_here"
+IMPACT_KEY = "your_impact_key_here"
+AWIN_KEY = "your_awin_key_here"
+
+[[kv_namespaces]]
+binding = "OFFERS"
+id = "your_offers_kv_namespace_id"
+
+[[kv_namespaces]]
+binding = "CLICKS"
+id = "your_clicks_kv_namespace_id"
+
+[[kv_namespaces]]
+binding = "SALES"
+id = "your_sales_kv_namespace_id"
+
+[[kv_namespaces]]
+binding = "USERS"
+id = "your_users_kv_namespace_id"
+
+[triggers]
+crons = ["0 0 * * *", "0 */6 * * *"]  # Daily offer refresh + 6-hour ranking

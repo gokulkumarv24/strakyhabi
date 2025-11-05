@@ -1,0 +1,24 @@
+{
+  "name": "streaky-affiliate-demo",
+  "version": "1.0.0",
+  "description": "Streaky App Affiliate Revenue System Demo",
+  "main": "test-server.js",
+  "scripts": {
+    "start": "node test-server.js",
+    "demo": "node test-server.js",
+    "test": "node test-server.js"
+  },
+  "dependencies": {
+    "http": "*",
+    "url": "*"
+  },
+  "keywords": [
+    "affiliate",
+    "revenue",
+    "cpc",
+    "cps",
+    "monetization"
+  ],
+  "author": "Streaky Team",
+  "license": "MIT"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "streaky-affiliate-engine",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker for Streaky App affiliate revenue system",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail"
+  },
+  "author": "Gokul Kumar",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.78.0"
+  }
+}

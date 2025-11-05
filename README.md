@@ -1,13 +1,129 @@
-# 🎯 Streaky - Zero-Cost Social Productivity & Automation App
+# 🚀 Streaky - Productivity App with Affiliate Revenue System
 
-> **A complete, production-ready Flutter mobile app with serverless Cloudflare Workers backend, designed to scale to 10M users with ₹0 infrastructure cost.**
+> **A comprehensive Flutter productivity app with integrated CPS/CPC affiliate monetization system that generates sustainable revenue while providing genuine value to users.**
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.19.0-blue.svg)](https://flutter.dev/)
 [![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-orange.svg)](https://workers.cloudflare.com/)
+[![Revenue System](https://img.shields.io/badge/Revenue-CPC%2FCPS-green.svg)](#revenue-system)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-green.svg)](.github/workflows/deploy.yml)
 
 ---
+
+## 📁 Project Structure
+
+```
+streaky_app/
+├── 📱 lib/                          # Flutter App Code
+│   ├── 🎯 main.dart                 # App entry point
+│   ├── 📺 screens/
+│   │   ├── rewards_screen.dart      # Affiliate rewards UI
+│   │   ├── home_screen.dart         # Main app screen
+│   │   └── auth_screen.dart         # Authentication
+│   ├── 🔧 services/
+│   │   ├── reward_service.dart      # Enhanced with affiliate features
+│   │   ├── affiliate_api_service.dart # Backend communication
+│   │   ├── local_storage.dart       # Offline data storage
+│   │   └── notification_service.dart # Push notifications
+│   ├── 🎨 widgets/
+│   │   ├── scratch_coupon_card.dart # Gamified reward cards
+│   │   └── (other widgets)
+│   ├── 📊 models/
+│   │   ├── offer_model.dart         # Affiliate offer data
+│   │   ├── reward_model.dart        # Reward and earnings
+│   │   └── user_earnings_model.dart # Revenue tracking
+│   └── 🔌 providers/                # State management
+│
+├── 🌐 backend/                      # Cloudflare Worker Backend
+│   ├── 📄 wrangler.toml            # Worker configuration
+│   ├── 📦 package.json             # Dependencies
+│   ├── 📋 DEPLOYMENT.md            # Deployment guide
+│   └── 📁 src/
+│       ├── index.js                # Main router
+│       ├── fetch_offers.js         # Multi-network offer fetching
+│       ├── click_tracker.js        # CPC tracking
+│       ├── sale_callback.js        # CPS conversion handling
+│       ├── rank_offers.js          # Dynamic ranking
+│       ├── user_profile.js         # User analytics
+│       └── predictive_rank.js      # AI personalization
+│
+├── 📚 docs/                        # Documentation & Testing
+│   ├── IMPLEMENTATION_COMPLETE.md  # Implementation summary
+│   ├── TESTING_WITHOUT_FLUTTER.md  # Alternative testing methods
+│   ├── QUICK_TESTING_GUIDE.md     # Quick start guide
+│   └── affiliate-revenue-demo.html # HTML demo for testing
+│
+├── 📋 pubspec.yaml                 # Flutter dependencies
+├── 🔧 analysis_options.yaml        # Code analysis rules
+└── 📱 android/ ios/ web/           # Platform-specific code
+```
+
+## 🎯 What This App Does
+
+### For Users:
+
+- **📱 Productivity Features**: Habit tracking, task management, streak counting
+- **🎁 Reward System**: Earn real money through affiliate offers
+- **🎮 Gamification**: Scratch cards, achievements, daily rewards
+- **💰 Cashback**: Get money for shopping through integrated offers
+
+### For You (Revenue):
+
+- **💵 CPC Revenue**: ₹0.50-₹2.00 per offer click
+- **💰 CPS Commission**: 5-15% on completed purchases
+- **📈 Scalable Income**: Grows with your user base
+- **🤖 AI Optimization**: Personalized offers increase conversions
+
+## 🚀 Quick Start
+
+### 1. Flutter App Development
+
+```bash
+cd streaky_app
+flutter pub get
+flutter run
+```
+
+### 2. Backend Deployment
+
+```bash
+cd backend
+npm install -g wrangler
+wrangler login
+wrangler deploy
+```
+
+### 3. Testing Without Flutter
+
+```bash
+# Open the HTML demo in any browser
+open docs/affiliate-revenue-demo.html
+```
+
+## 💰 Revenue System Overview
+
+### Architecture
+
+```
+Flutter App ←→ Cloudflare Worker ←→ Affiliate Networks
+     ↓              ↓                      ↓
+ Local Storage    KV Storage        Real Commission APIs
+(Offline cache)  (Revenue data)    (vCommission, Admitad, etc.)
+```
+
+### Integrated Networks
+
+- ✅ **vCommission** - Indian affiliate network
+- ✅ **Admitad** - Global marketplace
+- ✅ **Cuelinks** - Automated affiliate links
+- ✅ **Impact** - Enterprise affiliate platform
+- ✅ **Awin** - International network
+
+### Revenue Streams
+
+1. **CPC (Cost Per Click)**: Users tap offers → You earn ₹0.50-₹2.00
+2. **CPS (Cost Per Sale)**: Users purchase → You earn 5-15% commission
+3. **Engagement Bonuses**: Streak rewards, daily bonuses
+4. **AI Optimization**: Personalized offers = higher conversion rates
 
 ## ⚙️ PROJECT OBJECTIVE
 

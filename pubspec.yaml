@@ -1,5 +1,5 @@
 name: streaky_app
-description: A zero-cost social productivity app built on Cloudflare Edge
+description: Productivity app with integrated CPS/CPC affiliate revenue system
 publish_to: "none"
 version: 1.0.0+1
 
@@ -28,6 +28,9 @@ dependencies:
   # Authentication & Security
   jwt_decoder: ^2.0.1
   crypto: ^3.0.3
+
+  # Affiliate Revenue System
+  url_launcher: ^6.2.4
 
   # Notifications & Scheduling
   flutter_local_notifications: ^17.0.0
@@ -58,7 +61,6 @@ dependencies:
 
   # Future Social Features (Phase 4)
   # share_plus: ^7.2.2
-  # url_launcher: ^6.2.4
 
 dev_dependencies:
   flutter_test:
